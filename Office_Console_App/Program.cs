@@ -21,7 +21,7 @@ namespace Office_Console_App
             ShowEmployee(connctionString);
             //AddEmployee(connctionString);
             //EditEmployee(connctionString);
-            //DeleteEmployee(connctionString);
+            //DeleteEmployee(connctionString,int.Parse(Console.ReadLine()) );
         }
 
         static void ShowEmployee(string connctionString)
@@ -34,6 +34,7 @@ namespace Office_Console_App
                     string query = @"SELECT * FROM Employee";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     var dataFromDb = cmd.ExecuteReader();
+                    //מחזיר את כל הנתונים מהשאילתא
 
                     if (dataFromDb.HasRows)
                     {
@@ -49,7 +50,7 @@ namespace Office_Console_App
                     }
                     else
                     {
-                        Console.WriteLine("empty");
+                        Console.WriteLine("no rows in table");
                     }
                 }
             }
@@ -89,6 +90,7 @@ namespace Office_Console_App
                     SqlCommand cmd = new SqlCommand(query, conn);
                     
                     int rowsEffected = cmd.ExecuteNonQuery();
+                    //מחזיר את מספר השורות שהושפעו
 
                     Console.WriteLine(rowsEffected);
                     conn.Close();
@@ -134,11 +136,13 @@ namespace Office_Console_App
 
                     string query = $@"UPDATE Employee
                                     SET FullName = '{FullName}', Born='{born}', 
-                                        Email ='{email}', Pay='{salary}' ";
+                                        Email ='{email}', Pay='{salary}' 
+                                        WHERE Id={id} ";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
                     int rowsEffected = cmd.ExecuteNonQuery();
                     Console.WriteLine(rowsEffected);
+
                     conn.Close();
 
 
@@ -146,19 +150,25 @@ namespace Office_Console_App
 
 
             }
+            
 
-            catch (Exception ex)
+            catch (SqlException sqlError)
             {
 
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(sqlError.Message);
             }
-            
+            catch (Exception error)
+            {
+
+                Console.WriteLine(error.Message);
+            }
+
         }
 
-        static void DeleteEmployee(string connctionString)
+        static void DeleteEmployee(string connctionString, int id)
         {
-            Console.WriteLine("enter your id number");
-            int id = int.Parse(Console.ReadLine());
+            //Console.WriteLine("enter your id number");
+            //int id = int.Parse(Console.ReadLine());
             try
             {
                 using (SqlConnection conn = new SqlConnection(connctionString))
